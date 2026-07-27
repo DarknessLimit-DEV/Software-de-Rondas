@@ -5,6 +5,9 @@ export const state = {
     volume: 0.8,
     notepadText: '',
     themeColor: '#00f0ff',
+    bgColor: '#0a0d16',
+    panelColor: 'rgba(18, 24, 43, 0.75)',
+    clockColor: '#39ff14',
     
     // Alarma de Rondas
     isAlarmActive: false,

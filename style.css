@@ -3,14 +3,15 @@
 :root {
     --bg-main: #0a0d16;
     --bg-panel: rgba(18, 24, 43, 0.75);
-    --border-color: rgba(0, 240, 255, 0.15);
-    --border-hover: rgba(0, 240, 255, 0.4);
+    --border-color: color-mix(in srgb, var(--neon-cyan) 15%, transparent);
+    --border-hover: color-mix(in srgb, var(--neon-cyan) 40%, transparent);
     
     /* Colores Neón */
     --neon-cyan: #00f0ff;
     --neon-green: #39ff14;
     --neon-amber: #ffaa00;
     --neon-red: #ff0055;
+    --clock-color: #39ff14;
     
     /* Textos */
     --text-primary: #f1f5f9;
@@ -132,8 +133,8 @@ body {
     font-family: 'Orbitron', monospace;
     font-size: 2.2rem;
     font-weight: 700;
-    color: var(--neon-green);
-    text-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
+    color: var(--clock-color);
+    text-shadow: 0 0 10px var(--clock-color);
     letter-spacing: 2px;
     line-height: 1;
 }
@@ -1253,6 +1254,109 @@ body {
 .theme-green { background-color: #39ff14; color: #39ff14; }
 .theme-purple { background-color: #b026ff; color: #b026ff; }
 .theme-orange { background-color: #ff6600; color: #ff6600; }
+
+/* Selector de fondo */
+.bg-selector-container {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.bg-color-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.bg-color-btn:hover {
+    transform: scale(1.15);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+.bg-color-btn.active {
+    border-color: #fff;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+    transform: scale(1.15);
+}
+
+/* Colores de los botones de fondo */
+.bg-deep-space { background-color: #0a0d16; }
+.bg-midnight { background-color: #0b0f19; }
+.bg-obsidian { background-color: #050508; }
+.bg-graphite { background-color: #121214; }
+.bg-forest { background-color: #070e0a; }
+
+/* Footer de Desarrollador */
+.console-footer {
+    text-align: center;
+    padding: 12px 25px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-panel);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    transition: border-color 0.3s ease;
+}
+
+/* Selectores de tarjetas y reloj */
+.panel-selector-container, .clock-selector-container {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.panel-color-btn, .clock-color-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.panel-color-btn:hover, .clock-color-btn:hover {
+    transform: scale(1.15);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+.panel-color-btn.active, .clock-color-btn.active {
+    border-color: #fff;
+    box-shadow: 0 0 12px currentColor;
+    transform: scale(1.15);
+}
+
+/* Botón rojo de acento */
+.theme-red { background-color: #ff0055; color: #ff0055; }
+
+/* Colores de botones de tarjetas */
+.panel-default { background-color: #12182b; color: #12182b; }
+.panel-grey { background-color: #1e1e23; color: #1e1e23; }
+.panel-blue { background-color: #0a1432; color: #0a1432; }
+.panel-green { background-color: #0a1e14; color: #0a1e14; }
+.panel-purple { background-color: #190a28; color: #190a28; }
+
+/* Colores de botones de reloj */
+.clock-cian { background-color: #00f0ff; color: #00f0ff; }
+.clock-blue { background-color: #00a2ff; color: #00a2ff; }
+.clock-green { background-color: #39ff14; color: #39ff14; }
+.clock-purple { background-color: #b026ff; color: #b026ff; }
+.clock-orange { background-color: #ff6600; color: #ff6600; }
+.clock-red { background-color: #ff0055; color: #ff0055; }
+
+
 
 
 

@@ -219,6 +219,57 @@ document.addEventListener('DOMContentLoaded', () => {
             applyThemeColor(color);
         });
     });
+
+    // Cargar Fondo Guardado
+    const savedBg = localStorage.getItem('bgColor');
+    if (savedBg) {
+        state.bgColor = savedBg;
+        applyBgColor(savedBg);
+    }
+
+    // Escuchadores para cambiar de fondo
+    document.querySelectorAll('.bg-color-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const color = e.target.getAttribute('data-color');
+            state.bgColor = color;
+            localStorage.setItem('bgColor', color);
+            applyBgColor(color);
+        });
+    });
+
+    // Cargar Fondo de las Tarjetas Guardado
+    const savedPanelColor = localStorage.getItem('panelColor');
+    if (savedPanelColor) {
+        state.panelColor = savedPanelColor;
+        applyPanelColor(savedPanelColor);
+    }
+
+    // Escuchadores para cambiar de fondo de las tarjetas
+    document.querySelectorAll('.panel-color-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const color = e.target.getAttribute('data-color');
+            state.panelColor = color;
+            localStorage.setItem('panelColor', color);
+            applyPanelColor(color);
+        });
+    });
+
+    // Cargar Color del Reloj Guardado
+    const savedClockColor = localStorage.getItem('clockColor');
+    if (savedClockColor) {
+        state.clockColor = savedClockColor;
+        applyClockColor(savedClockColor);
+    }
+
+    // Escuchadores para cambiar el color del reloj
+    document.querySelectorAll('.clock-color-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const color = e.target.getAttribute('data-color');
+            state.clockColor = color;
+            localStorage.setItem('clockColor', color);
+            applyClockColor(color);
+        });
+    });
 });
 
 // Aplica el color del tema a la consola
@@ -244,4 +295,48 @@ function applyThemeColor(hexColor) {
         }
     });
 }
+
+// Aplica el color de fondo a la consola
+function applyBgColor(hexColor) {
+    document.documentElement.style.setProperty('--bg-main', hexColor);
+    
+    // Actualizar clase activa en los botones de selección de fondo
+    document.querySelectorAll('.bg-color-btn').forEach(btn => {
+        if (btn.getAttribute('data-color') === hexColor) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+}
+
+// Aplica el color de fondo a las tarjetas (paneles)
+function applyPanelColor(colorValue) {
+    document.documentElement.style.setProperty('--bg-panel', colorValue);
+    
+    // Actualizar clase activa en los botones de selección de paneles
+    document.querySelectorAll('.panel-color-btn').forEach(btn => {
+        if (btn.getAttribute('data-color') === colorValue) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+}
+
+// Aplica el color al reloj digital
+function applyClockColor(colorValue) {
+    document.documentElement.style.setProperty('--clock-color', colorValue);
+    
+    // Actualizar clase activa en los botones de selección del reloj
+    document.querySelectorAll('.clock-color-btn').forEach(btn => {
+        if (btn.getAttribute('data-color') === colorValue) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+}
+
+
 
