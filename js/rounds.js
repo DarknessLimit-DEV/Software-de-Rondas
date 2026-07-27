@@ -1,9 +1,10 @@
 import { state, saveRoundsToLocalStorage, sortRounds } from './state.js';
 import { 
-    elRoundTimeInput, elScheduledRoundsList, elHistoryList, elBtnClearHistory, 
+    elRoundTimeInput, elRoundNoteInput, elScheduledRoundsList, elHistoryList, elBtnClearHistory, 
     elTabManual, elBatchStartTime, elBatchIntervalHours, elBatchIntervalMins, 
     elBatchCount, elRoundComment, elAlertGraceTimer, elAlertModal, 
-    elBtnDemoMode, elCountdownCard, elCountdownStatusText, elCountdownTimer, elCountdownTargetTime
+    elBtnDemoMode, elCountdownCard, elCountdownStatusText, elCountdownTimer, elCountdownTargetTime,
+    elAlertModalNoteContainer, elAlertModalNote, elSettingsModal
 } from './dom.js';
 import { calculateTargetDate, setDefaultInputTime } from './utils.js';
 import { initAudio, startAlarmSound, stopAlarmSound } from './audio.js';
@@ -22,11 +23,14 @@ export function addRoundFromInput() {
         return;
     }
 
+    const noteValue = elRoundNoteInput.value.trim();
+
     const newRound = {
         id: Date.now(),
         timeStr: timeValue,
         targetTime: calculateTargetDate(timeValue),
-        demo: false
+        demo: false,
+        note: noteValue
     };
 
     state.scheduledRounds.push(newRound);
@@ -34,6 +38,9 @@ export function addRoundFromInput() {
     renderScheduledRounds();
     initAudio();
     saveRoundsToLocalStorage();
+
+    // Limpiar input de notas
+    elRoundNoteInput.value = '';
 }
 
 export function generateBatchRounds() {
@@ -87,7 +94,8 @@ export function generateBatchRounds() {
             id: Date.now() + i,
             timeStr: timeStr,
             targetTime: new Date(runningDate),
-            demo: false
+            demo: false,
+            note: ''
         });
         addedCount++;
     }
@@ -148,10 +156,15 @@ export function renderScheduledRounds() {
             diffText = 'Ahora';
         }
 
+        const noteHtml = round.note ? `<span class="round-item-note">${round.note}</span>` : '';
+
         li.innerHTML = `
             <div class="round-info">
-                <span class="round-time-badge">${round.timeStr}${round.demo ? ' (Demo)' : ''}</span>
-                <span class="round-countdown-text">${diffText}</span>
+                <div class="round-info-header">
+                    <span class="round-time-badge">${round.timeStr}${round.demo ? ' (Demo)' : ''}</span>
+                    <span class="round-countdown-text">${diffText}</span>
+                </div>
+                ${noteHtml}
             </div>
             <button class="btn-delete-round" onclick="deleteRound(${round.id})" title="Cancelar ronda">
                 <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
@@ -170,7 +183,8 @@ export function loadRoundsFromLocalStorage() {
                 id: r.id,
                 timeStr: r.timeStr,
                 targetTime: calculateTargetDate(r.timeStr),
-                demo: false
+                demo: false,
+                note: r.note || ''
             }));
             sortRounds();
             renderScheduledRounds();
@@ -210,6 +224,8 @@ export function renderHistory() {
             statusLabel = 'Omitida';
         }
 
+        const noteHtml = item.note ? `<div class="history-item-note">Indicación: ${item.note}</div>` : '';
+
         li.className = `history-item ${statusClass}`;
         li.innerHTML = `
             <div class="history-item-header">
@@ -219,6 +235,7 @@ export function renderHistory() {
             <div class="history-item-meta">
                 Registrado a las ${item.completionTimeStr}
             </div>
+            ${noteHtml}
             <div class="history-item-comment">
                 ${item.comment}
             </div>
@@ -235,6 +252,13 @@ export function triggerRoundAlarm(round) {
 
     state.graceSecondsLeft = round.demo ? 30 : 120;
     elAlertGraceTimer.textContent = state.graceSecondsLeft;
+
+    if (round.note) {
+        elAlertModalNote.textContent = round.note;
+        elAlertModalNoteContainer.classList.remove('hidden');
+    } else {
+        elAlertModalNoteContainer.classList.add('hidden');
+    }
 
     elAlertModal.classList.remove('hidden');
 
@@ -292,7 +316,8 @@ export function confirmActiveRound(wasConfirmedByUser, autoStateMessage = '') {
             scheduledTime,
             completionTimeStr,
             status,
-            comment
+            comment,
+            note: state.currentActiveRound.note || ''
         });
     }
 
@@ -344,6 +369,11 @@ export function activateDemoMode() {
     initAudio();
     stopAlarmSound();
 
+    // Cerrar modal de ajustes para que se pueda ver la alarma
+    if (elSettingsModal) {
+        elSettingsModal.classList.add('hidden');
+    }
+
     const now = new Date();
     const demoTime = new Date(now.getTime() + 5000);
     
@@ -352,11 +382,15 @@ export function activateDemoMode() {
     const sec = String(demoTime.getSeconds()).padStart(2, '0');
     const timeStr = `${hr}:${min}:${sec}`;
 
+    // Permitir probar el demo con notas
+    const noteValue = elRoundNoteInput.value.trim() || 'Ronda de prueba (Demo)';
+
     const demoRound = {
         id: Date.now(),
         timeStr: timeStr,
         targetTime: demoTime,
-        demo: true
+        demo: true,
+        note: noteValue
     };
 
     state.scheduledRounds.push(demoRound);
@@ -371,6 +405,9 @@ export function activateDemoMode() {
         elBtnDemoMode.disabled = false;
         elBtnDemoMode.innerHTML = originalText;
     }, 5000);
+
+    // Limpiar input
+    elRoundNoteInput.value = '';
 }
 
 export function clearHistory() {

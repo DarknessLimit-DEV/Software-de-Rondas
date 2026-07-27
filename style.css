@@ -556,7 +556,7 @@ body {
    PANEL HISTORIAL DE RONDAS
    ========================================== */
 .panel-history {
-    height: 100%;
+    flex-grow: 1;
 }
 
 .history-container {
@@ -1093,5 +1093,127 @@ body {
 .scheduler-content.hidden {
     display: none !important;
 }
+
+/* ==========================================
+   ESTILOS PARA NOTAS Y BLOC DE NOTAS
+   ========================================== */
+
+/* Input de nota en el programador */
+.note-input {
+    flex: 2;
+    background: rgba(10, 13, 22, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: var(--text-primary);
+    padding: 0 12px;
+    font-size: 0.85rem;
+    outline: none;
+    transition: all 0.3s ease;
+    margin-right: 8px;
+}
+
+.note-input:focus {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+}
+
+/* Nota dentro de la cola de rondas */
+.round-item-note {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    padding-left: 8px;
+    border-left: 2px solid var(--neon-cyan);
+    font-style: italic;
+    opacity: 0.85;
+}
+
+.round-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 4px !important;
+}
+
+.round-info-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Panel del Bloc de Notas */
+.panel-notepad {
+    min-height: 150px;
+}
+
+.notepad-container {
+    width: 100%;
+    margin-top: 5px;
+}
+
+#notepad-area {
+    width: 100%;
+    background: rgba(10, 13, 22, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    color: var(--text-primary);
+    padding: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    outline: none;
+    resize: vertical;
+    min-height: 100px;
+    transition: all 0.3s ease;
+}
+
+#notepad-area:focus {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
+}
+
+/* Modal Alerta: Indicación Especial */
+.alert-modal-note-container {
+    background: rgba(0, 240, 255, 0.08);
+    border: 1px solid rgba(0, 240, 255, 0.25);
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.alert-modal-note-container.hidden {
+    display: none !important;
+}
+
+.alert-note-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--neon-cyan);
+    display: block;
+    margin-bottom: 4px;
+    letter-spacing: 1px;
+}
+
+.alert-note-text {
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Nota en el Historial */
+.history-item-note {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-style: italic;
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 2px solid rgba(255, 255, 255, 0.15);
+    padding: 4px 8px;
+    border-radius: 0 4px 4px 0;
+    margin-top: 2px;
+}
+
 
 

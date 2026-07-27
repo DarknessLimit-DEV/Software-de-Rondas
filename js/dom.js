@@ -2,6 +2,7 @@
 export const elLiveTime = document.getElementById('live-time');
 export const elLiveDate = document.getElementById('live-date');
 export const elRoundTimeInput = document.getElementById('round-time-input');
+export const elRoundNoteInput = document.getElementById('round-note-input');
 export const elBtnAddRound = document.getElementById('btn-add-round');
 export const elBtnTestSound = document.getElementById('btn-test-sound');
 export const elBtnTestCameraSound = document.getElementById('btn-test-camera-sound');
@@ -21,6 +22,10 @@ export const elAlertModal = document.getElementById('alert-modal');
 export const elAlertGraceTimer = document.getElementById('alert-grace-timer');
 export const elRoundComment = document.getElementById('round-comment');
 export const elBtnConfirmRound = document.getElementById('btn-confirm-round');
+export const elAlertModalNoteContainer = document.getElementById('alert-modal-note-container');
+export const elAlertModalNote = document.getElementById('alert-modal-note');
+export const elNotepadArea = document.getElementById('notepad-area');
+
 
 // Elementos del DOM (Limpieza de Historial)
 export const elBtnClearHistory = document.getElementById('btn-clear-history');

@@ -3,6 +3,7 @@ export const state = {
     scheduledRounds: [],
     historyRounds: [],
     volume: 0.8,
+    notepadText: '',
     
     // Alarma de Rondas
     isAlarmActive: false,
@@ -21,7 +22,8 @@ export const state = {
 export function saveRoundsToLocalStorage() {
     const roundsToSave = state.scheduledRounds.filter(r => !r.demo).map(r => ({
         id: r.id,
-        timeStr: r.timeStr
+        timeStr: r.timeStr,
+        note: r.note || ''
     }));
     localStorage.setItem('scheduledRounds', JSON.stringify(roundsToSave));
 }

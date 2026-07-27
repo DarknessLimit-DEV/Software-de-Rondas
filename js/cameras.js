@@ -2,7 +2,7 @@ import { state } from './state.js';
 import { 
     elCameraTimerDisplay, elCameraTimerMain, elCameraCountdownCard, 
     elCameraTargetDesc, elCameraEnabledCheckbox, elCameraIntervalInput, 
-    elCameraAlertBanner, elCameraGraceTimer, elBtnCameraDemo
+    elCameraAlertBanner, elCameraGraceTimer, elBtnCameraDemo, elSettingsModal
 } from './dom.js';
 import { initAudio, startCameraAlertSound, stopCameraAlertSound } from './audio.js';
 
@@ -99,6 +99,11 @@ export function activateCameraDemoMode() {
     initAudio();
     if (state.isCameraAlertActive) {
         dismissCameraAlert();
+    }
+
+    // Cerrar modal de ajustes para que se pueda ver la alerta superior
+    if (elSettingsModal) {
+        elSettingsModal.classList.add('hidden');
     }
     
     state.cameraEnabled = true;

@@ -1,6 +1,6 @@
 import { state, saveRoundsToLocalStorage, sortRounds } from './js/state.js';
 import { 
-    elLiveTime, elLiveDate, elRoundTimeInput, elBtnAddRound, elBtnTestSound, 
+    elLiveTime, elLiveDate, elRoundTimeInput, elRoundNoteInput, elBtnAddRound, elBtnTestSound, 
     elBtnTestCameraSound, elBtnDemoMode, elBtnCameraDemo, elVolumeControl, 
     elVolumeValue, elCountdownCard, elCountdownStatusText, elCountdownTimer, 
     elCountdownTargetTime, elScheduledRoundsList, elHistoryList, elAlertModal, 
@@ -11,7 +11,7 @@ import {
     elBatchIntervalHours, elBatchIntervalMins, elBatchCount, elBtnGenerateBatch, 
     elCameraEnabledCheckbox, elCameraIntervalInput, elCameraTimerDisplay, 
     elCameraTimerMain, elCameraCountdownCard, elCameraStatusText, 
-    elCameraAlertBanner, elCameraGraceTimer
+    elCameraAlertBanner, elCameraGraceTimer, elNotepadArea
 } from './js/dom.js';
 import { updateClock, setDefaultInputTime } from './js/utils.js';
 import { 
@@ -135,6 +135,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Cargar rondas persistidas
     loadRoundsFromLocalStorage();
+
+    // Cargar anotaciones de turno (Bloc de Notas)
+    const savedNotepad = localStorage.getItem('notepadText');
+    if (savedNotepad) {
+        state.notepadText = savedNotepad;
+        elNotepadArea.value = savedNotepad;
+    }
+
+    // Auto-guardado del Bloc de Notas
+    elNotepadArea.addEventListener('input', (e) => {
+        state.notepadText = e.target.value;
+        localStorage.setItem('notepadText', state.notepadText);
+    });
 
     // Event listeners para limpiar historial
     elBtnClearHistory.addEventListener('click', () => {
