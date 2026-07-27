@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consola de Rondas Perimetrales - Panel de Seguridad</title>
+    <meta name="description" content="Software de control y alertas para rondas de seguridad perimetral en tiempo real.">
+    <!-- Google Fonts: Orbitron (reloj/números) e Inter (texto general) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- BANNER ALERTA CÁMARAS (Flotante Superior) -->
+    <div id="camera-alert-banner" class="camera-banner hidden">
+        <div class="camera-banner-content">
+            <div class="camera-banner-icon-wrapper">
+                <svg viewBox="0 0 24 24" width="24" height="24" class="camera-banner-icon">
+                    <path fill="currentColor" d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4zM14 16H5V8h9v8z"/>
+                </svg>
+            </div>
+            <div class="camera-banner-text">
+                <span class="camera-banner-title">¡REVISIÓN DE CÁMARAS REQUERIDA!</span>
+                <span class="camera-banner-subtitle">Inspeccione todos los monitores de seguridad. Cierre automático en <span id="camera-grace-timer">18</span>s</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <!-- CABECERA DE LA CONSOLA -->
+        <header class="console-header">
+            <div class="header-logo">
+                <svg class="icon-shield" viewBox="0 0 24 24" width="32" height="32">
+                    <path fill="currentColor" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zM12 4.1l6 2.25v4.92c0 4.19-5.11 7.7-6 8.35-.89-.65-6-4.16-6-8.35V6.35l6-2.25z"/>
+                </svg>
+                <div class="logo-text">
+                    <h1>SECURE-GUARD</h1>
+                    <span class="subtitle">Consola de Control de Rondas y Monitorización de cámaras</span>
+                </div>
+            </div>
+            
+            <!-- SECCIÓN DERECHA DE CABECERA -->
+            <div class="header-right">
+                <div class="clock-display">
+                    <div id="live-time" class="time-text">00:00:00</div>
+                    <div id="live-date" class="date-text">Cargando fecha...</div>
+                </div>
+                <button id="btn-settings-toggle" class="header-settings-btn" title="Ajustes de la Consola">
+                    <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- CUERPO PRINCIPAL (DASHBOARD) -->
+        <main class="dashboard">
+            <!-- COLUMNA IZQUIERDA: CONTROLES Y RONDAS -->
+            <section class="dashboard-column col-left">
+                <!-- PANEL 1: PROGRAMADOR DE RONDAS -->
+                <div class="panel glass-panel">
+                    <h2 class="panel-title">
+                        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+                        Programador de Rondas
+                    </h2>
+                    
+                    <!-- PESTAÑAS DE CONFIGURACIÓN -->
+                    <div class="scheduler-tabs">
+                        <button id="tab-manual" class="tab-btn active">Individual</button>
+                        <button id="tab-auto" class="tab-btn">Secuencial</button>
+                    </div>
+
+                    <!-- CONTENIDO DE PROGRAMACIÓN INDIVIDUAL -->
+                    <div id="scheduler-manual-content" class="scheduler-content">
+                        <div class="control-grid" style="margin-top: 0; padding-top: 0;">
+                            <div class="control-box">
+                                <label for="round-time-input" class="control-label">Programar Nueva Ronda</label>
+                                <div class="input-group">
+                                    <input type="time" id="round-time-input" class="time-picker">
+                                    <button id="btn-add-round" class="btn btn-primary" title="Añadir Ronda">
+                                        Añadir Ronda
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CONTENIDO DE PROGRAMACIÓN SECUENCIAL (LOTE) -->
+                    <div id="scheduler-auto-content" class="scheduler-content hidden">
+                        <div class="control-grid-vertical" style="display: flex; flex-direction: column; gap: 15px; margin-top: 5px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                                <div class="control-box">
+                                    <label for="batch-start-time" class="control-label">Hora Inicio</label>
+                                    <input type="time" id="batch-start-time" class="time-picker" style="width: 100%;">
+                                </div>
+                                <div class="control-box">
+                                    <label class="control-label">Intervalo</label>
+                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                        <input type="number" id="batch-interval-hours" min="0" max="23" value="1" class="number-picker" style="width: 100%; text-align: center;">
+                                        <span class="label-text-small">h</span>
+                                        <input type="number" id="batch-interval-mins" min="0" max="59" value="30" class="number-picker" style="width: 100%; text-align: center;">
+                                        <span class="label-text-small">m</span>
+                                    </div>
+                                </div>
+                                <div class="control-box">
+                                    <label for="batch-count" class="control-label">Cantidad</label>
+                                    <input type="number" id="batch-count" min="1" max="24" value="8" class="number-picker" style="width: 100%; text-align: center;">
+                                </div>
+                            </div>
+                            <button id="btn-generate-batch" class="btn btn-primary" style="width: 100%; font-weight: 700;">
+                                Lote de rondas
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL 2: CUENTA REGRESIVA Y RONDAS FUTURAS -->
+                <div class="panel glass-panel">
+                    <h2 class="panel-title">
+                        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                        Próxima Ronda
+                    </h2>
+
+                    <!-- CONTENEDOR DE CUENTAS REGRESIVAS (Rondas y Cámaras) -->
+                    <div class="timers-grid">
+                        <!-- CUENTA REGRESIVA DE RONDAS -->
+                        <div id="countdown-card" class="countdown-card waiting">
+                            <div class="countdown-status" id="countdown-status-text">SIN RONDAS PROGRAMADAS</div>
+                            <div class="countdown-time" id="countdown-timer">--:--:--</div>
+                            <div class="countdown-target" id="countdown-target-time">Programa una hora para iniciar</div>
+                        </div>
+
+                        <!-- CUENTA REGRESIVA DE CÁMARAS -->
+                        <div id="camera-countdown-card" class="countdown-card camera-card active">
+                            <div class="countdown-status" id="camera-status-text">MONITOREO DE CÁMARAS</div>
+                            <div class="countdown-time" id="camera-timer-main">15:00</div>
+                            <div class="countdown-target" id="camera-target-desc">Revisión periódica</div>
+                        </div>
+                    </div>
+
+                    <!-- LISTA DE RONDAS PROGRAMADAS -->
+                    <div class="scheduled-rounds-container">
+                        <h3 class="section-subtitle">Cola de Rondas</h3>
+                        <ul id="scheduled-rounds-list" class="rounds-list">
+                            <li class="empty-list-msg">No hay rondas programadas para el turno.</li>
+                        </ul>
+                    </div>
+            </section>
+
+            <!-- COLUMNA DERECHA: HISTORIAL -->
+            <section class="dashboard-column col-right">
+                <div class="panel glass-panel panel-history">
+                    <h2 class="panel-title" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <span style="display: flex; align-items: center; gap: 10px;">
+                            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+                            Historial del Turno
+                        </span>
+                        <button id="btn-clear-history" class="btn-icon-only" title="Limpiar historial" style="display: none;">
+                            <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                        </button>
+                    </h2>
+                    <div class="history-container">
+                        <ul id="history-list" class="history-list">
+                            <li class="empty-list-msg">Aún no se registran actividades de rondas.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- ALERTA DE PANTALLA COMPLETA (MODAL RONDA PERIMETRAL) -->
+        <div id="alert-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <!-- ICONO ALERTA DE PULSO -->
+                <div class="alert-icon-wrapper">
+                    <svg class="alert-svg-pulse" viewBox="0 0 24 24" width="70" height="70">
+                        <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                    </svg>
+                </div>
+                
+                <h2 class="alert-modal-title">¡ALERTA DE RONDA ACTIVA!</h2>
+                <p class="alert-modal-desc">Es hora de realizar la inspección perimetral correspondiente.</p>
+                
+                <!-- TIEMPO LÍMITE DE RESPUESTA -->
+                <div class="alert-timeout-warning">
+                    Tiempo de gracia restante: <span id="alert-grace-timer">00</span> segundos
+                </div>
+
+                <!-- NOVEDADES / COMENTARIOS -->
+                <div class="alert-form">
+                    <label for="round-comment" class="form-label">Registro de Novedades</label>
+                    <textarea id="round-comment" class="form-textarea" placeholder="Escribe las novedades aquí... (ej. Todo en orden, Luces encendidas, Novedad en puerta sur)"></textarea>
+                    
+                    <!-- BOTONES CON COMENTARIOS RÁPIDOS -->
+                    <div class="quick-comments">
+                        <button type="button" class="btn-quick-comment">Todo en orden</button>
+                        <button type="button" class="btn-quick-comment">Perímetro asegurado</button>
+                        <button type="button" class="btn-quick-comment">Novedad reportada</button>
+                    </div>
+
+                    <!-- CONFIRMACIÓN -->
+                    <button id="btn-confirm-round" class="btn btn-emergency">
+                        CONFIRMAR RONDA REALIZADA
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CONFIGURACIÓN / AJUSTES (Emergente) -->
+    <div id="settings-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header-container" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 240, 255, 0.15); padding-bottom: 12px; margin-bottom: 20px; width: 100%;">
+                <h2 class="panel-title" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none; display: flex; align-items: center; gap: 10px;">
+                    <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                    Ajustes de la Consola
+                </h2>
+                <button id="btn-close-settings" class="btn-icon-only" title="Cerrar Ajustes">
+                    <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </button>
+            </div>
+            
+            <div class="control-grid" style="text-align: left;">
+                <!-- MONITOREO DE CÁMARAS -->
+                <div class="control-box">
+                    <div class="camera-control-header">
+                        <span class="control-label">Alerta de Cámaras</span>
+                        <label class="switch-container">
+                            <input type="checkbox" id="camera-enabled-checkbox" checked>
+                            <span class="switch-label">Habilitada</span>
+                        </label>
+                    </div>
+                    
+                    <div class="camera-settings-row">
+                        <div class="camera-interval-input">
+                            <span class="label-text-small">Revisión cada</span>
+                            <input type="number" id="camera-interval-input" min="1" max="120" value="15" class="number-picker">
+                            <span class="label-text-small">minutos</span>
+                        </div>
+                        <div class="camera-timer-container">
+                            <span class="camera-timer-label">Siguiente en:</span>
+                            <span id="camera-timer-display" class="camera-timer-text">15:00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AJUSTE DE VOLUMEN -->
+                <div class="control-box">
+                    <label for="volume-control" class="control-label">Volumen de Alerta</label>
+                    <div class="volume-slider-container">
+                        <svg viewBox="0 0 24 24" width="16" height="16" class="volume-icon"><path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                        <input type="range" id="volume-control" min="0" max="1" step="0.1" value="0.8" class="volume-slider">
+                        <span id="volume-value" class="volume-text">80%</span>
+                    </div>
+                </div>
+
+                <!-- PRUEBA DE ALARMA / MODOS -->
+                <div class="control-box">
+                    <span class="control-label">Simulador y Pruebas</span>
+                    <div class="button-group">
+                        <button id="btn-test-sound" class="btn btn-secondary">
+                            <svg viewBox="0 0 24 24" width="14" height="14" style="margin-right: 4px;"><path fill="currentColor" d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                            Probar Alarma de Ronda
+                        </button>
+                        <button id="btn-test-camera-sound" class="btn btn-secondary">
+                            <svg viewBox="0 0 24 24" width="14" height="14" style="margin-right: 4px;"><path fill="currentColor" d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4zM14 16H5V8h9v8z"/></svg>
+                            Probar Alarma de Cámaras
+                        </button>
+                        <button id="btn-demo-mode" class="btn btn-accent" title="Simular alarma de ronda en 5 segundos">
+                            Ronda Demo (5s)
+                        </button>
+                        <button id="btn-camera-demo" class="btn btn-accent" title="Simular alarma de cámaras en 5 segundos">
+                            Cámaras Demo (5s)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CONFIRMACIÓN (LIMPIAR HISTORIAL) -->
+    <div id="confirm-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="alert-icon-wrapper" style="color: var(--neon-amber);">
+                <svg viewBox="0 0 24 24" width="65" height="65" style="filter: drop-shadow(0 0 10px rgba(255, 170, 0, 0.4));">
+                    <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                </svg>
+            </div>
+            
+            <h2 class="alert-modal-title" style="color: var(--neon-amber); text-shadow: 0 0 10px rgba(255, 170, 0, 0.3);">¿ELIMINAR HISTORIAL?</h2>
+            <p class="alert-modal-desc">Esta acción borrará permanentemente todos los registros del turno actual. ¿Desea proceder?</p>
+            
+            <div class="confirm-modal-buttons" style="display: flex; gap: 15px; width: 100%; margin-top: 15px;">
+                <button id="btn-confirm-clear-yes" class="btn btn-primary" style="background: var(--neon-red); color: white; border: none; flex: 1; font-weight: 700;">
+                    SÍ, ELIMINAR
+                </button>
+                <button id="btn-confirm-clear-no" class="btn btn-secondary" style="flex: 1; font-weight: 700;">
+                    CANCELAR
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carga del Script Lógico -->
+    <script src="app.js"></script>
+</body>
+</html>
