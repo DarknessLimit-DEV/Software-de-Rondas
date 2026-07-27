@@ -674,6 +674,9 @@ body {
     z-index: 9999;
     opacity: 1;
     transition: opacity 0.3s ease;
+}
+
+#alert-modal {
     animation: pulse-alert 2s infinite ease-in-out;
 }
 
@@ -1214,6 +1217,43 @@ body {
     border-radius: 0 4px 4px 0;
     margin-top: 2px;
 }
+
+/* Selector de temas */
+.theme-selector-container {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.theme-color-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    outline: none;
+}
+
+.theme-color-btn:hover {
+    transform: scale(1.15);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+.theme-color-btn.active {
+    border-color: #fff;
+    box-shadow: 0 0 12px currentColor;
+    transform: scale(1.15);
+}
+
+/* Colores de los botones */
+.theme-cian { background-color: #00f0ff; color: #00f0ff; }
+.theme-blue { background-color: #00a2ff; color: #00a2ff; }
+.theme-green { background-color: #39ff14; color: #39ff14; }
+.theme-purple { background-color: #b026ff; color: #b026ff; }
+.theme-orange { background-color: #ff6600; color: #ff6600; }
+
 
 
 

@@ -4,6 +4,7 @@ export const state = {
     historyRounds: [],
     volume: 0.8,
     notepadText: '',
+    themeColor: '#00f0ff',
     
     // Alarma de Rondas
     isAlarmActive: false,

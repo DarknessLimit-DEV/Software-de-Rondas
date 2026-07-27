@@ -202,4 +202,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Escuchador del Generador en Lote
     elBtnGenerateBatch.addEventListener('click', generateBatchRounds);
+
+    // Cargar Tema Guardado
+    const savedTheme = localStorage.getItem('themeColor');
+    if (savedTheme) {
+        state.themeColor = savedTheme;
+        applyThemeColor(savedTheme);
+    }
+
+    // Escuchadores para cambiar de tema
+    document.querySelectorAll('.theme-color-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const color = e.target.getAttribute('data-color');
+            state.themeColor = color;
+            localStorage.setItem('themeColor', color);
+            applyThemeColor(color);
+        });
+    });
 });
+
+// Aplica el color del tema a la consola
+function applyThemeColor(hexColor) {
+    document.documentElement.style.setProperty('--neon-cyan', hexColor);
+    
+    // Calcular el color RGBA para la sombra
+    let r = 0, g = 240, b = 255;
+    if (hexColor.startsWith('#')) {
+        const bigint = parseInt(hexColor.slice(1), 16);
+        r = (bigint >> 16) & 255;
+        g = (bigint >> 8) & 255;
+        b = bigint & 255;
+    }
+    document.documentElement.style.setProperty('--shadow-cyan', `0 0 15px rgba(${r}, ${g}, ${b}, 0.35)`);
+    
+    // Actualizar clase activa en los botones de selección
+    document.querySelectorAll('.theme-color-btn').forEach(btn => {
+        if (btn.getAttribute('data-color') === hexColor) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+}
+
