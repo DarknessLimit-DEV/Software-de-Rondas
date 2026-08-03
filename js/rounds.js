@@ -4,14 +4,16 @@ import {
     elTabManual, elBatchStartTime, elBatchIntervalHours, elBatchIntervalMins, 
     elBatchCount, elRoundComment, elAlertGraceTimer, elAlertModal, 
     elBtnDemoMode, elCountdownCard, elCountdownStatusText, elCountdownTimer, elCountdownTargetTime,
-    elAlertModalNoteContainer, elAlertModalNote, elSettingsModal
+    elAlertModalNoteContainer, elAlertModalNote, elSettingsModal,
+    elEditRoundModal, elEditRoundId, elEditRoundTime, elEditRoundNote
 } from './dom.js';
 import { calculateTargetDate, setDefaultInputTime } from './utils.js';
 import { initAudio, startAlarmSound, stopAlarmSound } from './audio.js';
 import { dismissCameraAlert } from './cameras.js';
 
-// Exponer deleteRound a nivel global (window) ya que se usa en inline HTML onclick
+// Exponer deleteRound y openEditRound a nivel global (window) ya que se usan en inline HTML onclick
 window.deleteRound = deleteRound;
+window.openEditRound = openEditRound;
 
 export function addRoundFromInput() {
     const timeValue = elRoundTimeInput.value;
@@ -166,9 +168,14 @@ export function renderScheduledRounds() {
                 </div>
                 ${noteHtml}
             </div>
-            <button class="btn-delete-round" onclick="deleteRound(${round.id})" title="Cancelar ronda">
-                <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-            </button>
+            <div class="round-actions" style="display: flex; gap: 8px;">
+                <button class="btn-edit-round" onclick="openEditRound(${round.id})" title="Modificar ronda">
+                    <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                </button>
+                <button class="btn-delete-round" onclick="deleteRound(${round.id})" title="Cancelar ronda">
+                    <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                </button>
+            </div>
         `;
         elScheduledRoundsList.appendChild(li);
     });
@@ -251,6 +258,7 @@ export function triggerRoundAlarm(round) {
     elRoundComment.value = '';
 
     state.graceSecondsLeft = round.demo ? 30 : 120;
+    state.graceTargetTime = Date.now() + state.graceSecondsLeft * 1000;
     elAlertGraceTimer.textContent = state.graceSecondsLeft;
 
     if (round.note) {
@@ -270,8 +278,10 @@ export function triggerRoundAlarm(round) {
 }
 
 export function updateAlertGraceTimer() {
-    if (state.graceSecondsLeft > 0) {
-        state.graceSecondsLeft--;
+    const now = Date.now();
+    const diffMs = state.graceTargetTime - now;
+    if (diffMs > 0) {
+        state.graceSecondsLeft = Math.ceil(diffMs / 1000);
         elAlertGraceTimer.textContent = state.graceSecondsLeft;
         
         if (state.graceSecondsLeft <= 10) {
@@ -280,6 +290,8 @@ export function updateAlertGraceTimer() {
             elAlertGraceTimer.style.color = '';
         }
     } else {
+        state.graceSecondsLeft = 0;
+        elAlertGraceTimer.textContent = '0';
         confirmActiveRound(false, 'Ronda omitida (Límite de respuesta superado)');
     }
 }
@@ -413,4 +425,43 @@ export function activateDemoMode() {
 export function clearHistory() {
     state.historyRounds = [];
     renderHistory();
+}
+
+export function openEditRound(id) {
+    const round = state.scheduledRounds.find(r => r.id === id);
+    if (!round) return;
+    
+    elEditRoundId.value = id;
+    elEditRoundTime.value = round.timeStr.substring(0, 5);
+    elEditRoundNote.value = round.note || '';
+    
+    elEditRoundModal.classList.remove('hidden');
+}
+
+export function closeEditRound() {
+    elEditRoundModal.classList.add('hidden');
+}
+
+export function saveEditRound() {
+    const id = parseInt(elEditRoundId.value);
+    const roundIndex = state.scheduledRounds.findIndex(r => r.id === id);
+    if (roundIndex === -1) return;
+    
+    const timeVal = elEditRoundTime.value;
+    if (!timeVal) {
+        alert('Por favor, selecciona una hora válida.');
+        return;
+    }
+    
+    const noteVal = elEditRoundNote.value.trim();
+    
+    const updatedRound = state.scheduledRounds[roundIndex];
+    updatedRound.timeStr = timeVal;
+    updatedRound.note = noteVal;
+    updatedRound.targetTime = calculateTargetDate(timeVal);
+    
+    sortRounds();
+    renderScheduledRounds();
+    saveRoundsToLocalStorage();
+    closeEditRound();
 }

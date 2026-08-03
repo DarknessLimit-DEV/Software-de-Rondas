@@ -8,6 +8,7 @@ import { initAudio, startCameraAlertSound, stopCameraAlertSound } from './audio.
 
 export function resetCameraTimer() {
     state.cameraSecondsLeft = state.cameraIntervalMins * 60;
+    state.cameraTargetTime = Date.now() + state.cameraSecondsLeft * 1000;
     updateCameraTimerDisplay();
 }
 
@@ -59,17 +60,25 @@ export function handleCameraTimerLogic() {
     if (!state.cameraEnabled) return;
 
     if (state.isCameraAlertActive) {
-        if (state.cameraAlertSecondsLeft > 0) {
-            state.cameraAlertSecondsLeft--;
+        const now = Date.now();
+        const diffMs = state.cameraAlertTargetTime - now;
+        if (diffMs > 0) {
+            state.cameraAlertSecondsLeft = Math.ceil(diffMs / 1000);
             elCameraGraceTimer.textContent = state.cameraAlertSecondsLeft;
         } else {
+            state.cameraAlertSecondsLeft = 0;
+            elCameraGraceTimer.textContent = '0';
             dismissCameraAlert();
         }
     } else {
-        if (state.cameraSecondsLeft > 0) {
-            state.cameraSecondsLeft--;
+        const now = Date.now();
+        const diffMs = state.cameraTargetTime - now;
+        if (diffMs > 0) {
+            state.cameraSecondsLeft = Math.ceil(diffMs / 1000);
             updateCameraTimerDisplay();
         } else {
+            state.cameraSecondsLeft = 0;
+            updateCameraTimerDisplay();
             triggerCameraAlert();
         }
     }
@@ -78,6 +87,7 @@ export function handleCameraTimerLogic() {
 export function triggerCameraAlert() {
     state.isCameraAlertActive = true;
     state.cameraAlertSecondsLeft = 18;
+    state.cameraAlertTargetTime = Date.now() + 18 * 1000;
     elCameraGraceTimer.textContent = state.cameraAlertSecondsLeft;
     
     elCameraAlertBanner.classList.remove('hidden');
@@ -111,6 +121,7 @@ export function activateCameraDemoMode() {
     elCameraTimerDisplay.classList.remove('disabled');
     
     state.cameraSecondsLeft = 5;
+    state.cameraTargetTime = Date.now() + 5000;
     updateCameraTimerDisplay();
     
     const originalText = elBtnCameraDemo.innerHTML;

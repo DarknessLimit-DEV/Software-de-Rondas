@@ -349,6 +349,42 @@
         </div>
     </div>
 
+    <!-- MODAL DE EDICIÓN DE RONDA (Emergente) -->
+    <div id="edit-round-modal" class="modal-overlay hidden">
+        <div class="modal-content" style="border-color: var(--neon-cyan); box-shadow: var(--shadow-cyan), inset 0 0 20px rgba(0, 240, 255, 0.1); background: rgba(14, 20, 35, 0.95); max-width: 500px;">
+            <div class="modal-header-container" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 240, 255, 0.15); padding-bottom: 12px; margin-bottom: 20px; width: 100%;">
+                <h2 class="panel-title" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none; display: flex; align-items: center; gap: 10px;">
+                    <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                    Modificar Ronda
+                </h2>
+                <button id="btn-close-edit-round" class="btn-icon-only" title="Cancelar">
+                    <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </button>
+            </div>
+            
+            <div class="control-grid" style="text-align: left;">
+                <input type="hidden" id="edit-round-id">
+                <div class="control-box">
+                    <label for="edit-round-time" class="control-label">Hora de la Ronda</label>
+                    <input type="time" id="edit-round-time" class="time-picker" style="width: 100%;">
+                </div>
+                <div class="control-box">
+                    <label for="edit-round-note" class="control-label">Mensaje / Nota</label>
+                    <input type="text" id="edit-round-note" class="note-input" style="width: 100%; margin-right: 0;" placeholder="Escribe un mensaje o indicación...">
+                </div>
+                
+                <div style="display: flex; gap: 15px; width: 100%; margin-top: 15px;">
+                    <button id="btn-save-edit-round" class="btn btn-primary" style="flex: 1; font-weight: 700;">
+                        GUARDAR CAMBIOS
+                    </button>
+                    <button id="btn-cancel-edit-round" class="btn btn-secondary" style="flex: 1; font-weight: 700;">
+                        CANCELAR
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL DE CONFIRMACIÓN (LIMPIAR HISTORIAL) -->
     <div id="confirm-modal" class="modal-overlay hidden">
         <div class="modal-content">

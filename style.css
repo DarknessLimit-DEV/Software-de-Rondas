@@ -553,6 +553,24 @@ body {
     background: rgba(255, 0, 85, 0.1);
 }
 
+.btn-edit-round {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-edit-round:hover {
+    color: var(--neon-cyan);
+    background: rgba(0, 240, 255, 0.1);
+}
+
 /* ==========================================
    PANEL HISTORIAL DE RONDAS
    ========================================== */

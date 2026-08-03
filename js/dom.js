@@ -59,3 +59,13 @@ export const elCameraStatusText = document.getElementById('camera-status-text');
 export const elCameraAlertBanner = document.getElementById('camera-alert-banner');
 export const elCameraGraceTimer = document.getElementById('camera-grace-timer');
 export const elCameraTargetDesc = document.getElementById('camera-target-desc');
+
+// Elementos del DOM (Modal de Edición de Ronda)
+export const elEditRoundModal = document.getElementById('edit-round-modal');
+export const elEditRoundId = document.getElementById('edit-round-id');
+export const elEditRoundTime = document.getElementById('edit-round-time');
+export const elEditRoundNote = document.getElementById('edit-round-note');
+export const elBtnCloseEditRound = document.getElementById('btn-close-edit-round');
+export const elBtnSaveEditRound = document.getElementById('btn-save-edit-round');
+export const elBtnCancelEditRound = document.getElementById('btn-cancel-edit-round');
+

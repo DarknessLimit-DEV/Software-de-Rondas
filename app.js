@@ -11,7 +11,8 @@ import {
     elBatchIntervalHours, elBatchIntervalMins, elBatchCount, elBtnGenerateBatch, 
     elCameraEnabledCheckbox, elCameraIntervalInput, elCameraTimerDisplay, 
     elCameraTimerMain, elCameraCountdownCard, elCameraStatusText, 
-    elCameraAlertBanner, elCameraGraceTimer, elNotepadArea
+    elCameraAlertBanner, elCameraGraceTimer, elNotepadArea,
+    elEditRoundModal, elBtnCloseEditRound, elBtnSaveEditRound, elBtnCancelEditRound
 } from './js/dom.js';
 import { updateClock, setDefaultInputTime } from './js/utils.js';
 import { 
@@ -21,7 +22,8 @@ import {
     addRoundFromInput, generateBatchRounds, loadRoundsFromLocalStorage, 
     renderScheduledRounds, renderHistory, clearHistory, 
     triggerRoundAlarm, updateAlertGraceTimer, confirmActiveRound, 
-    updateMainCountdownCard, addToHistory, activateDemoMode
+    updateMainCountdownCard, addToHistory, activateDemoMode,
+    closeEditRound, saveEditRound
 } from './js/rounds.js';
 import { 
     resetCameraTimer, handleCameraToggle, handleCameraIntervalChange, 
@@ -176,6 +178,16 @@ document.addEventListener('DOMContentLoaded', () => {
     elSettingsModal.addEventListener('click', (e) => {
         if (e.target === elSettingsModal) {
             elSettingsModal.classList.add('hidden');
+        }
+    });
+
+    // Event listeners para Modal de Edición de Ronda
+    elBtnCloseEditRound.addEventListener('click', closeEditRound);
+    elBtnCancelEditRound.addEventListener('click', closeEditRound);
+    elBtnSaveEditRound.addEventListener('click', saveEditRound);
+    elEditRoundModal.addEventListener('click', (e) => {
+        if (e.target === elEditRoundModal) {
+            closeEditRound();
         }
     });
 
