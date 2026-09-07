@@ -1,4 +1,4 @@
-import { state, saveRoundsToLocalStorage, sortRounds } from './state.js';
+import { state, saveRoundsToLocalStorage, saveHistoryToLocalStorage, sortRounds } from './state.js';
 import { 
     elRoundTimeInput, elRoundNoteInput, elScheduledRoundsList, elHistoryList, elBtnClearHistory, 
     elTabManual, elBatchStartTime, elBatchIntervalHours, elBatchIntervalMins, 
@@ -201,9 +201,22 @@ export function loadRoundsFromLocalStorage() {
     }
 }
 
+export function loadHistoryFromLocalStorage() {
+    try {
+        const saved = localStorage.getItem('historyRounds');
+        if (saved) {
+            state.historyRounds = JSON.parse(saved);
+            renderHistory();
+        }
+    } catch (e) {
+        console.error('Error al cargar historial de localStorage:', e);
+    }
+}
+
 export function addToHistory(item) {
     state.historyRounds.unshift(item);
     renderHistory();
+    saveHistoryToLocalStorage();
 }
 
 export function renderHistory() {
@@ -425,6 +438,7 @@ export function activateDemoMode() {
 export function clearHistory() {
     state.historyRounds = [];
     renderHistory();
+    saveHistoryToLocalStorage();
 }
 
 export function openEditRound(id) {
@@ -464,4 +478,18 @@ export function saveEditRound() {
     renderScheduledRounds();
     saveRoundsToLocalStorage();
     closeEditRound();
+}
+
+// Recalcula los targetTime de todas las rondas programadas según la hora actual
+export function resyncAllRounds() {
+    if (state.scheduledRounds && state.scheduledRounds.length > 0) {
+        state.scheduledRounds.forEach(round => {
+            if (!round.demo) {
+                round.targetTime = calculateTargetDate(round.timeStr);
+            }
+        });
+        sortRounds();
+        renderScheduledRounds();
+        saveRoundsToLocalStorage();
+    }
 }

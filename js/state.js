@@ -32,7 +32,17 @@ export function saveRoundsToLocalStorage() {
     localStorage.setItem('scheduledRounds', JSON.stringify(roundsToSave));
 }
 
+// Guardar historial en LocalStorage
+export function saveHistoryToLocalStorage() {
+    try {
+        localStorage.setItem('historyRounds', JSON.stringify(state.historyRounds));
+    } catch (e) {
+        console.error('Error al guardar historial en localStorage:', e);
+    }
+}
+
 // Ordenar las rondas por hora programada
 export function sortRounds() {
     state.scheduledRounds.sort((a, b) => a.targetTime - b.targetTime);
 }
+

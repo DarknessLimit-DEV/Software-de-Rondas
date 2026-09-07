@@ -37,6 +37,7 @@ export const elBtnConfirmClearNo = document.getElementById('btn-confirm-clear-no
 export const elBtnSettingsToggle = document.getElementById('btn-settings-toggle');
 export const elBtnCloseSettings = document.getElementById('btn-close-settings');
 export const elSettingsModal = document.getElementById('settings-modal');
+export const elBtnSyncTime = document.getElementById('btn-sync-time');
 
 // Elementos del DOM (Autoprogramador Secuencial)
 export const elTabManual = document.getElementById('tab-manual');

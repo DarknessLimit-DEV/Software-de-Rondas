@@ -58,6 +58,50 @@ git branch -d nombre-de-la-rama
 ```
 *(Si da error y quieres forzar el borrado de todas formas, usa `-D` en mayúscula: `git branch -D nombre-de-la-rama`)*
 
+
+---
+
+## 🔀 Fusión de Ramas (Merge) y Limpieza
+
+Cuando terminas de trabajar en una rama de desarrollo (como `arregloTimeStamps`) y quieres integrar sus cambios de forma definitiva a la rama principal (`main`), sigue este proceso:
+
+### 1. Asegurar que los cambios están confirmados
+Antes de moverte, asegúrate de haber guardado tus últimos cambios en la rama de desarrollo:
+```bash
+git add .
+git commit -m "Mensaje descriptivo"
+```
+
+### 2. Cambiar a la rama principal
+Cámbiate a la rama `main`:
+```bash
+git checkout main
+```
+
+### 3. Fusionar la rama de desarrollo
+Trae e integra los cambios de tu rama de desarrollo en `main`:
+```bash
+git merge nombre-de-la-rama
+```
+*(Ejemplo: `git merge arregloTimeStamps`)*
+
+### 4. Subir la rama principal actualizada a GitHub
+Envía la fusión recién realizada en tu computadora al servidor remoto:
+```bash
+git push origin main
+```
+
+### 5. Borrar la rama que ya no necesitas
+Para mantener limpio tu proyecto, elimina la rama de desarrollo:
+- **Borrar localmente**:
+  ```bash
+  git branch -d nombre-de-la-rama
+  ```
+- **Borrar en GitHub (remoto)**:
+  ```bash
+  git push origin --delete nombre-de-la-rama
+  ```
+
 ---
 
 ## 📡 Sincronización con GitHub (Remoto)

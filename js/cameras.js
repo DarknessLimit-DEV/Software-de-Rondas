@@ -37,6 +37,7 @@ export function updateCameraTimerDisplay() {
 
 export function handleCameraToggle() {
     state.cameraEnabled = elCameraEnabledCheckbox.checked;
+    localStorage.setItem('cameraEnabled', state.cameraEnabled.toString());
     if (!state.cameraEnabled) {
         if (state.isCameraAlertActive) {
             dismissCameraAlert();
@@ -53,6 +54,7 @@ export function handleCameraIntervalChange() {
         val = 15;
     }
     state.cameraIntervalMins = val;
+    localStorage.setItem('cameraIntervalMins', state.cameraIntervalMins.toString());
     resetCameraTimer();
 }
 

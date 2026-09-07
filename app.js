@@ -1,4 +1,4 @@
-import { state, saveRoundsToLocalStorage, sortRounds } from './js/state.js';
+import { state, saveRoundsToLocalStorage, saveHistoryToLocalStorage, sortRounds } from './js/state.js';
 import { 
     elLiveTime, elLiveDate, elRoundTimeInput, elRoundNoteInput, elBtnAddRound, elBtnTestSound, 
     elBtnTestCameraSound, elBtnDemoMode, elBtnCameraDemo, elVolumeControl, 
@@ -6,7 +6,7 @@ import {
     elCountdownTargetTime, elScheduledRoundsList, elHistoryList, elAlertModal, 
     elAlertGraceTimer, elRoundComment, elBtnConfirmRound, elBtnClearHistory, 
     elConfirmModal, elBtnConfirmClearYes, elBtnConfirmClearNo, elBtnSettingsToggle, 
-    elBtnCloseSettings, elSettingsModal, elTabManual, elTabAuto, 
+    elBtnCloseSettings, elSettingsModal, elBtnSyncTime, elTabManual, elTabAuto, 
     elSchedulerManualContent, elSchedulerAutoContent, elBatchStartTime, 
     elBatchIntervalHours, elBatchIntervalMins, elBatchCount, elBtnGenerateBatch, 
     elCameraEnabledCheckbox, elCameraIntervalInput, elCameraTimerDisplay, 
@@ -20,6 +20,7 @@ import {
 } from './js/audio.js';
 import { 
     addRoundFromInput, generateBatchRounds, loadRoundsFromLocalStorage, 
+    loadHistoryFromLocalStorage, resyncAllRounds,
     renderScheduledRounds, renderHistory, clearHistory, 
     triggerRoundAlarm, updateAlertGraceTimer, confirmActiveRound, 
     updateMainCountdownCard, addToHistory, activateDemoMode,
@@ -111,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const vol = parseFloat(e.target.value);
         elVolumeValue.textContent = `${Math.round(vol * 100)}%`;
         updateVolume(vol);
+        localStorage.setItem('volume', vol.toString());
     });
 
     // Event Listeners del Modal de Alerta de Ronda
@@ -129,6 +131,33 @@ document.addEventListener('DOMContentLoaded', () => {
     elCameraEnabledCheckbox.addEventListener('change', handleCameraToggle);
     elCameraIntervalInput.addEventListener('input', handleCameraIntervalChange);
 
+    // Cargar volumen guardado
+    const savedVolume = localStorage.getItem('volume');
+    if (savedVolume !== null) {
+        const vol = parseFloat(savedVolume);
+        if (!isNaN(vol)) {
+            state.volume = vol;
+            elVolumeControl.value = vol;
+            elVolumeValue.textContent = `${Math.round(vol * 100)}%`;
+            updateVolume(vol);
+        }
+    }
+
+    // Cargar configuración guardada de cámaras
+    const savedCameraEnabled = localStorage.getItem('cameraEnabled');
+    if (savedCameraEnabled !== null) {
+        state.cameraEnabled = (savedCameraEnabled === 'true');
+        elCameraEnabledCheckbox.checked = state.cameraEnabled;
+    }
+    const savedCameraInterval = localStorage.getItem('cameraIntervalMins');
+    if (savedCameraInterval !== null) {
+        const interval = parseInt(savedCameraInterval, 10);
+        if (!isNaN(interval) && interval > 0) {
+            state.cameraIntervalMins = interval;
+            elCameraIntervalInput.value = interval;
+        }
+    }
+
     // Inicializar el selector de hora con la hora actual + 1 hora
     setDefaultInputTime();
     
@@ -137,6 +166,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Cargar rondas persistidas
     loadRoundsFromLocalStorage();
+
+    // Cargar historial de rondas persistido
+    loadHistoryFromLocalStorage();
 
     // Cargar anotaciones de turno (Bloc de Notas)
     const savedNotepad = localStorage.getItem('notepadText');
@@ -180,6 +212,43 @@ document.addEventListener('DOMContentLoaded', () => {
             elSettingsModal.classList.add('hidden');
         }
     });
+
+    // Event listener para botón de Sincronización de Hora y Recarga
+    if (elBtnSyncTime) {
+        elBtnSyncTime.addEventListener('click', () => {
+            // Indicar retroalimentación visual en el botón
+            elBtnSyncTime.classList.add('btn-syncing');
+            const syncTextEl = elBtnSyncTime.querySelector('.btn-sync-text');
+            if (syncTextEl) {
+                syncTextEl.textContent = 'Sincronizando hora...';
+            }
+
+            // 1. Recalcular todas las rondas programadas con la hora actual del sistema
+            resyncAllRounds();
+
+            // 2. Asegurar que todos los datos estén guardados en localStorage antes de recargar
+            saveRoundsToLocalStorage();
+            saveHistoryToLocalStorage();
+            if (state.notepadText !== undefined) {
+                localStorage.setItem('notepadText', state.notepadText);
+            }
+            localStorage.setItem('themeColor', state.themeColor);
+            localStorage.setItem('bgColor', state.bgColor);
+            localStorage.setItem('panelColor', state.panelColor);
+            localStorage.setItem('clockColor', state.clockColor);
+            localStorage.setItem('volume', state.volume.toString());
+            localStorage.setItem('cameraEnabled', state.cameraEnabled.toString());
+            localStorage.setItem('cameraIntervalMins', state.cameraIntervalMins.toString());
+
+            // 3. Actualizar reloj inmediatamente
+            updateClock();
+
+            // 4. Recargar la consola para sincronizar limpiamente con el sistema operativo
+            setTimeout(() => {
+                window.location.reload();
+            }, 350);
+        });
+    }
 
     // Event listeners para Modal de Edición de Ronda
     elBtnCloseEditRound.addEventListener('click', closeEditRound);
